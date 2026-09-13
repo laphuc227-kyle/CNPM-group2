@@ -1,0 +1,13 @@
+{
+    "members": [
+        {"member_id": "LIB001", "username": "member01", "password": "123456", "full_name": "Nguyen Van A", "email": "member01@ut.edu.vn", "date_of_birth": "2001-05-20", "address": "123 Nguyen Trai, Q5, TP.HCM", "membership_type": "Standard"}
+    ],
+    "books": [
+        {"code": "BK001", "title": "Clean Code", "author": "Robert C. Martin", "category": "Software Engineering", "publisher": "Prentice Hall", "quantity": 3, "available": 2},
+        {"code": "BK002", "title": "Introduction to Algorithms", "author": "Thomas H. Cormen", "category": "Computer Science", "publisher": "MIT Press", "quantity": 2, "available": 2}
+    ],
+    "borrow_records": [
+        {"record_id": "BR001", "member_id": "LIB001", "book_code": "BK001", "borrow_date": "2026-07-25", "due_date": "2026-08-10", "return_date": null, "status": "Borrowed"}
+    ],
+    "fines": []
+}
