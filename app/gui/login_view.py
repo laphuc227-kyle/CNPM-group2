@@ -9,9 +9,10 @@ class LoginView(ttk.Frame):
     console app's 'Login as (member/admin/exit):' step exactly -- just
     with buttons and text fields instead of typed input()."""
 
-    def __init__(self, parent, on_login):
+    def __init__(self, parent, on_login, on_register=None):
         super().__init__(parent, padding=40)
         self.on_login = on_login
+        self.on_register = on_register
         self.role = tk.StringVar(value="member")
 
         center = ttk.Frame(self)
@@ -49,6 +50,12 @@ class LoginView(ttk.Frame):
             center, text="Log in", style="Accent.TButton", command=self._attempt_login
         )
         login_btn.pack(fill="x")
+
+        if self.on_register is not None:
+            ttk.Button(
+                center, text="New here? Create a member account",
+                command=self.on_register,
+            ).pack(fill="x", pady=(8, 0))
 
         # Enter key submits from either field
         self.username_entry.bind("<Return>", lambda e: self._attempt_login())

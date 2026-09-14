@@ -90,6 +90,38 @@ class Member(User):
             "address": self.address, "membership_type": self.membership_type,
         }
 
+    # ---------- Self-registration ----------
+
+    @staticmethod
+    def _next_member_id(data):
+        if not data["members"]:
+            return "LIB001"
+        last = max(int(m["member_id"][3:]) for m in data["members"])
+        return f"LIB{last + 1:03d}"
+
+    @classmethod
+    def register(cls, username, password, full_name, email, date_of_birth,
+                 address, membership_type="Standard"):
+        """Self-registration: a new person creates their own Member
+        account directly (as opposed to Administrator.add_member(),
+        which is an admin adding someone on their behalf). Rejects a
+        username that is already taken; otherwise generates a new
+        member_id and persists the new Member, matching the Member
+        entity in the Class Diagram exactly.
+        """
+        data = load_data()
+        if _find_member_dict(data, username) is not None:
+            raise ValueError(f"Username '{username}' is already taken.")
+
+        member = cls(
+            member_id=cls._next_member_id(data), username=username, password=password,
+            full_name=full_name, email=email, date_of_birth=date_of_birth,
+            address=address, membership_type=membership_type,
+        )
+        data["members"].append(member.to_dict())
+        save_data(data)
+        return member
+
     # ---------- Member self-service functions ----------
 
     def view_personal_info(self):
@@ -330,7 +362,14 @@ class Administrator(User):
     # ---------- Member Management ----------
 
     def add_member(self, member: Member):
+        """Raises ValueError if the username or the member_id is already
+        taken -- an admin enters member_id by hand (unlike self-service
+        Member.register(), which generates it), so it can collide too."""
         data = load_data()
+        if _find_member_dict(data, member.username) is not None:
+            raise ValueError(f"Username '{member.username}' is already taken.")
+        if any(m["member_id"] == member.member_id for m in data["members"]):
+            raise ValueError(f"Member ID '{member.member_id}' already exists.")
         data["members"].append(member.to_dict())
         save_data(data)
 
@@ -353,7 +392,12 @@ class Administrator(User):
     # ---------- Book Management ----------
 
     def add_book(self, book: Book):
+        """Raises ValueError if the book code is already used -- same
+        rule as Member usernames, so the library can't end up with two
+        different books sharing one code."""
         data = load_data()
+        if _find_book_dict(data, book.code) is not None:
+            raise ValueError(f"Book code '{book.code}' already exists.")
         data["books"].append(book.to_dict())
         save_data(data)
 

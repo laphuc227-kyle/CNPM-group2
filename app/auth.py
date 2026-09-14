@@ -18,3 +18,15 @@ def authenticate_admin(username, password):
     if admin.login(username, password):
         return admin
     return None
+
+
+def register_member(username, password, full_name, email, date_of_birth,
+                     address, membership_type="Standard"):
+    """Self-service account creation for a new Member. Raises ValueError
+    (with a user-facing message) if the username is already taken;
+    otherwise returns the newly created, already-persisted Member."""
+    return Member.register(
+        username=username, password=password, full_name=full_name,
+        email=email, date_of_birth=date_of_birth, address=address,
+        membership_type=membership_type,
+    )

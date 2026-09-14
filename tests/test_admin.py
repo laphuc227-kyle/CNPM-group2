@@ -1,5 +1,6 @@
 from app.models import Administrator, Member, Book
 from app.db import load_data
+import pytest
 
 admin = Administrator()
 
@@ -15,6 +16,28 @@ def test_add_member():
     data = load_data()
 
     assert any(m["username"] == "user999" for m in data["members"])
+
+
+def test_add_member_rejects_duplicate_username():
+    duplicate = Member(
+        member_id="LIB998", username="user999", password="000000",
+        full_name="Another User", email="another@ut.edu.vn",
+        date_of_birth="1999-01-01", address="Another Address",
+        membership_type="Standard",
+    )
+    with pytest.raises(ValueError):
+        admin.add_member(duplicate)
+
+
+def test_add_member_rejects_duplicate_member_id():
+    duplicate_id = Member(
+        member_id="LIB999", username="brand_new_username", password="000000",
+        full_name="Yet Another User", email="yetanother@ut.edu.vn",
+        date_of_birth="1998-01-01", address="Yet Another Address",
+        membership_type="Standard",
+    )
+    with pytest.raises(ValueError):
+        admin.add_member(duplicate_id)
 
 
 def test_edit_member():
@@ -40,6 +63,15 @@ def test_add_book():
     data = load_data()
 
     assert any(b["code"] == "BK999" for b in data["books"])
+
+
+def test_add_book_rejects_duplicate_code():
+    duplicate = Book(
+        code="BK999", title="Another Book", author="Another Author",
+        category="Test", publisher="Test Publisher", quantity=1, available=1,
+    )
+    with pytest.raises(ValueError):
+        admin.add_book(duplicate)
 
 
 def test_edit_book():

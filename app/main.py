@@ -1,4 +1,4 @@
-from .auth import authenticate_member, authenticate_admin
+from .auth import authenticate_member, authenticate_admin, register_member
 from .models import Member, Book
 
 
@@ -68,8 +68,11 @@ def admin_member_management(admin):
                 address=ask("Address: "),
                 membership_type=ask("Membership Type (Standard/Premium): "),
             )
-            admin.add_member(member)
-            print("Member added.")
+            try:
+                admin.add_member(member)
+                print("Member added.")
+            except ValueError as e:
+                print(f"Could not add member: {e}")
 
         elif c == "2":
             u = ask("Username: ")
@@ -112,8 +115,11 @@ def admin_book_management(admin):
                 publisher=ask("Publisher: "),
                 quantity=qty, available=qty,
             )
-            admin.add_book(book)
-            print("Book added.")
+            try:
+                admin.add_book(book)
+                print("Book added.")
+            except ValueError as e:
+                print(f"Could not add book: {e}")
 
         elif c == "2":
             code = ask("Book code: ")
@@ -211,14 +217,37 @@ def admin_menu(admin):
             print("Invalid option.")
 
 
+def register_flow():
+    print("\n--- REGISTER NEW MEMBER ACCOUNT ---")
+    username = ask("Choose a username: ")
+    password = ask("Choose a password: ")
+    full_name = ask("Full Name: ")
+    email = ask("Email: ")
+    date_of_birth = ask("Date of Birth (YYYY-MM-DD): ")
+    address = ask("Address: ")
+    membership_type = ask("Membership Type (Standard/Premium) [Standard]: ") or "Standard"
+
+    try:
+        member = register_member(
+            username, password, full_name, email, date_of_birth, address, membership_type
+        )
+        print(f"Account created. Your Member ID is {member.member_id}. You can now log in.")
+    except ValueError as e:
+        print(f"Registration failed: {e}")
+
+
 def run():
     print("Welcome to Library Management System (Group 02)")
 
     while True:
-        role = ask("Login as (member/admin/exit): ")
+        role = ask("Login as (member/admin/register/exit): ")
 
         if role == "exit":
             break
+
+        if role == "register":
+            register_flow()
+            continue
 
         if role not in ("member", "admin"):
             print("Invalid role.")
