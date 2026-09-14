@@ -112,7 +112,11 @@ class AdminView(ttk.Frame):
             email=values["email"], date_of_birth=values["date_of_birth"],
             address=values["address"], membership_type=values["membership_type"],
         )
-        self.admin.add_member(member)
+        try:
+            self.admin.add_member(member)
+        except ValueError as e:
+            messagebox.showerror("Add member", str(e))
+            return
         self.show_members()
 
     def _edit_member(self):
@@ -182,7 +186,11 @@ class AdminView(ttk.Frame):
             category=values["category"], publisher=values["publisher"],
             quantity=qty, available=qty,
         )
-        self.admin.add_book(book)
+        try:
+            self.admin.add_book(book)
+        except ValueError as e:
+            messagebox.showerror("Add book", str(e))
+            return
         self.show_books()
 
     def _edit_book(self):

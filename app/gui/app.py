@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .login_view import LoginView
+from .register_view import RegisterView
 from .member_view import MemberView
 from .admin_view import AdminView
 
@@ -49,9 +50,19 @@ class App(tk.Tk):
 
     def show_login(self):
         self._clear()
-        LoginView(self._container, on_login=self._handle_login).pack(
-            fill="both", expand=True
-        )
+        LoginView(
+            self._container, on_login=self._handle_login, on_register=self.show_register
+        ).pack(fill="both", expand=True)
+
+    def show_register(self):
+        self._clear()
+        RegisterView(
+            self._container, on_registered=self._handle_registered, on_cancel=self.show_login
+        ).pack(fill="both", expand=True)
+
+    def _handle_registered(self, member):
+        # New account created -- log the person straight in as a member.
+        self.show_member(member)
 
     def _handle_login(self, role, user):
         if role == "member":
