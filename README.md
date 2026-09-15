@@ -77,7 +77,7 @@ python3-tk)
 python -m app.main
 
 # Run tests
-pytest -vv
+python -m pytest -vv
 
 # Docker build
 docker build -t library-system .
